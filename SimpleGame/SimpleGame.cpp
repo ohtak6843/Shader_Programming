@@ -17,8 +17,16 @@ but WITHOUT ANY WARRANTY.
 
 Renderer *g_Renderer = NULL;
 
+bool g_bNeedReloadShaderPrograms = false;
+
 void RenderScene(void)
 {
+	if (g_bNeedReloadShaderPrograms)
+	{
+		g_Renderer->ReloadAllShaderPrograms();
+		g_bNeedReloadShaderPrograms = false;
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -37,17 +45,22 @@ void Idle(void)
 
 void MouseInput(int button, int state, int x, int y)
 {
-	RenderScene();
 }
 
 void KeyInput(unsigned char key, int x, int y)
 {
-	RenderScene();
+	switch (key)
+	{
+	case '1':
+		g_bNeedReloadShaderPrograms = true;
+		break;
+	default:
+		break;
+	}
 }
 
 void SpecialKeyInput(int key, int x, int y)
 {
-	RenderScene();
 }
 
 int main(int argc, char **argv)
