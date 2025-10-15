@@ -96,7 +96,7 @@ void CircleParticle()
 		float tt = t * t;
 		float nTime = t / lifeTime;
 		float angle = c_PI * 2 * a_Value; // [0, 2PI*value]
-		float radius = 0.5;
+		float radius = 1.f;
 
 		vec2 pos = vec2(sin(angle), cos(angle));
 		pos = radius * pos;
