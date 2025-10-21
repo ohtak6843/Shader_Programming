@@ -1,4 +1,5 @@
 #pragma once
+#define MAX_POINTS 500
 
 #include <string>
 #include <cstdlib>
@@ -25,16 +26,16 @@ private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	void DeleteAllShaderPrograms();
 	void CompileAllShaderPrograms();
-	bool ReadFile(char* filename, std::string *target);
+	bool ReadFile(char* filename, std::string* target);
 	void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 	GLuint CompileShaders(char* filenameVS, char* filenameFS);
 	void CreateVertexBufferObjects();
-	void GetGLPosition(float x, float y, float *newX, float *newY);
+	void GetGLPosition(float x, float y, float* newX, float* newY);
 	void CreateParticles(int count);
 	void CreateGridMesh(int x, int y);
 
 	bool m_Initialized = false;
-	
+
 	unsigned int m_WindowSizeX = 0;
 	unsigned int m_WindowSizeY = 0;
 
@@ -60,5 +61,8 @@ private:
 	// Full Screen
 	GLuint m_FullScreenVBO = 0;
 	GLuint m_FullScreenShader = 0;
+
+	// Rain Drop
+	float m_Points[MAX_POINTS * 4];
 };
 
