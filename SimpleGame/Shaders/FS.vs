@@ -3,11 +3,6 @@
 in vec3 a_Position;
 in vec2 a_TexPos;
 
-// a_Position [-1, 1]
-// --> 0, 0 left top | 1, 1 right bottom
-// u : (a_Position.x + 1) / 2
-// v : (1 - a_Position.y) / 2
-
 out vec2 v_UV;
 
 void main()
