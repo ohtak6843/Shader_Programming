@@ -27,16 +27,16 @@ void RenderScene(void)
 		g_bNeedReloadShaderPrograms = false;
 	}
 
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	g_Renderer->DrawFullScreenColor(0.f, 0.f, 0.f, 0.1f);
-	glClearColor(0.f, 0.f, 0.f, 0.f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//g_Renderer->DrawFullScreenColor(0.f, 0.f, 0.f, 0.1f);
+	glClearColor(1.f, 0.f, 0.f, 0.f);
 
 	// Renderer Test
 	//g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
 	//g_Renderer->DrawTest();
 	//g_Renderer->DrawParticle();
-	g_Renderer->DrawGridMesh();
-	//g_Renderer->DrawFS();
+	//g_Renderer->DrawGridMesh();
+	g_Renderer->DrawFS();
 
 	glutSwapBuffers();
 }

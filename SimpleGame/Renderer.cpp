@@ -513,7 +513,7 @@ void Renderer::DrawParticle()
 
 void Renderer::DrawGridMesh()
 {
-	m_Time += 0.0016;
+	m_Time += 0.00016;
 
 	//Program select
 	GLuint shader = m_GridMeshShader;
@@ -575,7 +575,7 @@ void Renderer::DrawFullScreenColor(float r, float g, float b, float a)
 
 void Renderer::DrawFS()
 {
-	m_Time += 0.016;
+	m_Time += 0.00016;
 
 	//Program select
 	GLuint shader = m_FSShader;
