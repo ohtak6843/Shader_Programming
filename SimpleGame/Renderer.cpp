@@ -305,12 +305,17 @@ GLuint Renderer::CreatePngTexture(char* filePath, GLuint samplingMethod)
 
 void Renderer::DrawTexture(float x, float y, float sx, float sy, GLuint texID)
 {
+
+	m_Time += 0.00016;
+
 	//Program select
 	GLuint shader = m_TexShader;
 	glUseProgram(shader);
 
 	int uTex = glGetUniformLocation(shader, "u_TexID");
 	glUniform1i(uTex, 0);
+	int uTimeLoc = glGetUniformLocation(shader, "u_Time");
+	glUniform1f(uTimeLoc, m_Time);
 	int uTrans = glGetUniformLocation(shader, "u_Trans");
 	glUniform2f(uTrans, x, y);
 	int uScale = glGetUniformLocation(shader, "u_Scale");
@@ -337,11 +342,20 @@ void Renderer::DrawTexture(float x, float y, float sx, float sy, GLuint texID)
 
 void Renderer::CreateFBOs()
 {
-	for (int idx = 0; idx < 5; idx++)
+	for (int idx = 0; idx < 2; idx++)
 	{
 		//Color Gen : texture(render target)
 		glGenTextures(1, &m_RTs[idx]);
 		glBindTexture(GL_TEXTURE_2D, m_RTs[idx]);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		glGenTextures(1, &m_SubRTs[idx]);
+		glBindTexture(GL_TEXTURE_2D, m_SubRTs[idx]);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -362,6 +376,7 @@ void Renderer::CreateFBOs()
 		//Attach
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBOs[idx]);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_RTs[idx], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_SubRTs[idx], 0);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
 		//Check
@@ -559,6 +574,9 @@ void Renderer::DrawParticle()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	GLenum DrawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, DrawBuffers);
+
 	m_Time += 0.00016;
 
 	GLuint shader = m_ParticleShader;
@@ -680,6 +698,9 @@ void Renderer::DrawFS()
 	m_Time += 0.00066;
 	int number = (int)floor(m_Time) % 10 + 2;
 
+	GLenum DrawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, DrawBuffers);
+
 	//Program select
 	GLuint shader = m_FSShader;
 	glUseProgram(shader);
@@ -748,28 +769,33 @@ void Renderer::DrawFS()
 void Renderer::DrawDebugTextures()
 {
 	DrawTexture(-0.5, -0.5, 0.5, 0.5, m_RTs[0]);
-	DrawTexture(0.5, -0.5, 0.5, 0.5, m_RTs[1]);
+	DrawTexture(0.5, -0.5, 0.5, 0.5, m_SubRTs[0]);
+	DrawTexture(-0.5, 0.5, 0.5, 0.5, m_RTs[1]);
+	DrawTexture(0.5, 0.5, 0.5, 0.5, m_SubRTs[1]);
 }
 
 void Renderer::DrawFBOs()
 {
-	//FBO0 Render
+	//FBO0 Render 512x512
 	int idx = 0;
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBOs[idx]);
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	DrawParticle();
+	glViewport(0, 0, 512, 512);
+	DrawFS();
 
-	//FBO1 Render
+	//FBO1 Render 512x512
 	idx = 1;
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBOs[idx]);
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, 512, 512);
 	DrawGridMesh();
 
 	//Restore
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, 1024, 1024);
 }
 
 void Renderer::GetGLPosition(float x, float y, float* newX, float* newY)

@@ -91,5 +91,6 @@ private:
 	// FBOs
 	GLuint m_FBOs[5];
 	GLuint m_RTs[5];
+	GLuint m_SubRTs[5];
 };
 
