@@ -26,6 +26,7 @@ public:
 	void DrawFS();
 	void DrawDebugTextures();
 	void DrawFBOs();
+	void DrawBloomParticle();
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -40,7 +41,7 @@ private:
 	void CreateGridMesh(int x, int y);
 
 	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
-	void DrawTexture(float x, float y, float sx, float sy, GLuint texID);
+	void DrawTexture(float x, float y, float sx, float sy, GLuint texID, GLuint texID1, GLuint method);
 	void CreateFBOs();
 
 	bool m_Initialized = false;
@@ -81,6 +82,8 @@ private:
 	// Textures
 	GLuint m_RGBTexture = 0;
 	GLuint m_IVETexture = 0;
+	GLuint m_ParticleTexture = 0;
+	GLuint m_PingpongTexture[2] = { 0, 0 };
 	GLuint m_NumTexture[10];
 	GLuint m_TotalNumTexture = 0;
 
@@ -92,5 +95,11 @@ private:
 	GLuint m_FBOs[5];
 	GLuint m_RTs[5];
 	GLuint m_SubRTs[5];
+
+	GLuint m_HDRFBO0 = 0;
+	GLuint m_HDRRT0_0 = 0;
+	GLuint m_HDRRT0_1 = 0;
+
+	GLuint m_PingpongFBO[2] = { 0, 0 };
 };
 

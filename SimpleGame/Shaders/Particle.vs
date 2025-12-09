@@ -8,8 +8,10 @@ in vec3 a_Vel;
 in float a_LifeTime;
 in float a_Mass;
 in float a_Period;
+in vec2 a_Tex;
 
 out vec4 v_Color;
+out vec2 v_Tex;
 
 uniform float u_Time;
 uniform vec3 u_Force;
@@ -112,7 +114,7 @@ void CircleParticle()
 	}
 
 	gl_Position = newPosition;
-	v_Color = vec4(newColor.rgb, newAlpha);
+	v_Color = vec4(newColor.rgb * 5 * newAlpha, newAlpha);
 }
 
 void main()
@@ -120,4 +122,6 @@ void main()
 	//Fountain();
 	//SinParticle();
 	CircleParticle();
+
+	v_Tex = a_Tex;
 }
